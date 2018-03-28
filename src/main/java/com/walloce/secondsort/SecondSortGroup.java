@@ -3,8 +3,16 @@ package com.walloce.secondsort;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
+/**
+ * 自定义分组
+ * @author Walloce
+ * 2018
+ */
 public class SecondSortGroup extends WritableComparator {
 	
+	/**
+	 * 创建需要的实例对象
+	 */
 	public  SecondSortGroup() {
 		super(SecondKey.class, true);
 	}

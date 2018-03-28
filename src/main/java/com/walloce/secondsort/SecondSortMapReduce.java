@@ -17,6 +17,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import com.walloce.secondsort.SecondSortMapReduce.myMap.myCombiner;
 import com.walloce.secondsort.SecondSortMapReduce.myMap.myReduce;
 
 
@@ -87,23 +88,14 @@ public class SecondSortMapReduce extends Configured implements Tool {
 		 * @author Walloce
 		 * 2018
 		 */
-		static class myCombiner extends Reducer<Text, IntWritable, Text, IntWritable> {
+		static class myCombiner extends Reducer<SecondKey, NullWritable, SecondKey, NullWritable> {
 			
-			private IntWritable result = new IntWritable();
+			private NullWritable result = NullWritable.get();
 
 			@Override
-			protected void reduce(Text key, Iterable<IntWritable> values, Context context)
+			protected void reduce(SecondKey key, Iterable<NullWritable> values, Context context)
 					throws IOException, InterruptedException {
 				System.out.println("Combiner阶段开始...");
-				System.out.println(key +"--->"+ values.toString());
-				int sum = 0;
-				int counter = 0;
-				for(IntWritable value : values) {
-					sum += value.get();
-					counter++;
-				}
-				result.set(sum);
-				System.out.println(key +"===>"+ result.toString() +"==="+ counter);
 				context.write(key, result);
 			}
 		}
@@ -139,7 +131,7 @@ public class SecondSortMapReduce extends Configured implements Tool {
 		job.setMapOutputKeyClass(SecondKey.class);
 		job.setMapOutputValueClass(NullWritable.class);
 		//==============shuffle=======================
-		//job.setCombinerClass(myCombiner.class);
+		job.setCombinerClass(myCombiner.class);
 		job.setPartitionerClass(SecondSortPartition.class);
 		job.setGroupingComparatorClass(SecondSortGroup.class);
 		
